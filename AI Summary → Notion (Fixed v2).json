@@ -1,0 +1,184 @@
+{
+  "name": "AI Summary → Notion (Fixed v2)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-summary-to-notion",
+        "options": {}
+      },
+      "id": "20623099-e4ef-44d6-a3f5-c5e1019eea05",
+      "name": "Webhook (AI Summary Input)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -400
+      ],
+      "webhookId": "3e16313c-efff-4bf5-a55a-a0472f6ec4a9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "t1",
+              "name": "title",
+              "value": "={{ $json.body.title }}",
+              "type": "string"
+            },
+            {
+              "id": "699c39cf-d46e-41a7-970a-474f7f171a14",
+              "name": "source",
+              "value": "={{ $json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "s1",
+              "name": "series",
+              "value": "={{ $json.body.series }}",
+              "type": "string"
+            },
+            {
+              "id": "c1",
+              "name": "content",
+              "value": "={{ $json.body.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "232861f3-da55-4412-b4da-282e05a41eb3",
+      "name": "整理字段1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2d6572e6-b9cd-8088-8423-cdac1f6b10b3",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Title|title",
+              "title": "={{ $json.title }}"
+            },
+            {
+              "key": "Series|select",
+              "selectValue": "={{ $json.series }}"
+            },
+            {
+              "key": "Source|select",
+              "selectValue": "={{ $json.source }}"
+            },
+            {
+              "key": "Final Content|rich_text",
+              "textContent": "={{ $json.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6fe4a54a-7e5f-4b59-9c0a-92fbd99465c8",
+      "name": "写入 Notion 数据库",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -400
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "VJO0M4OuCXEQURXm",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook (AI Summary Input)": [
+      {
+        "json": {
+          "headers": {
+            "host": "kele5215.app.n8n.cloud",
+            "user-agent": "curl/8.7.1",
+            "content-length": "133",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "240f:65:9f25:1:6106:8c76:b63f:cfcf",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "JP",
+            "cf-ray": "9b516dfad1b8efd0-NRT",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "240f:65:9f25:1:6106:8c76:b63f:cfcf, 172.64.213.180",
+            "x-forwarded-host": "kele5215.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-80-5fc4f59987-jxvcn",
+            "x-is-trusted": "yes",
+            "x-real-ip": "240f:65:9f25:1:6106:8c76:b63f:cfcf"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "title": "测试总结 · Workflow OK",
+            "series": "日语",
+            "source": "AI",
+            "content": "这是一次完整写入测试 ~"
+          },
+          "webhookUrl": "https://kele5215.app.n8n.cloud/webhook/ai-summary-to-notion",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook (AI Summary Input)": {
+      "main": [
+        [
+          {
+            "node": "整理字段1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理字段1": {
+      "main": [
+        [
+          {
+            "node": "写入 Notion 数据库",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "471fec46-a715-4a89-9039-c34fd76b50fa",
+  "meta": {
+    "instanceId": "adff9b0b0a9ba782065bc5400a759d6132362c9ee983026c6d773201af7e78b3"
+  },
+  "id": "ntw7W20qNMsRgpGD",
+  "tags": []
+}
