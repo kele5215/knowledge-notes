@@ -1,0 +1,238 @@
+{
+  "name": "AI Summary → Notion (Fixed v2)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-summary-to-notion",
+        "options": {}
+      },
+      "id": "20623099-e4ef-44d6-a3f5-c5e1019eea05",
+      "name": "Webhook (AI Summary Input)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -400
+      ],
+      "webhookId": "3e16313c-efff-4bf5-a55a-a0472f6ec4a9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "t1",
+              "name": "title",
+              "value": "={{ $json.body.title }}",
+              "type": "string"
+            },
+            {
+              "id": "699c39cf-d46e-41a7-970a-474f7f171a14",
+              "name": "source",
+              "value": "={{ $json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "s1",
+              "name": "series",
+              "value": "={{ $json.body.series }}",
+              "type": "string"
+            },
+            {
+              "id": "c1",
+              "name": "content",
+              "value": "={{ $json.body.content }}",
+              "type": "string"
+            },
+            {
+              "id": "c8ff3310-3436-43a3-8d0f-84adf61b1229",
+              "name": "body.slug",
+              "value": "={{ $json.body.slug }}",
+              "type": "string"
+            },
+            {
+              "id": "43900c13-5b58-427f-a307-d66bf5d91ad3",
+              "name": "body.publish_ready_markdown",
+              "value": "={{ $json.body.publish_ready_markdown }}",
+              "type": "string"
+            },
+            {
+              "id": "79cf2bc4-c540-4256-8c77-0437d5494213",
+              "name": "body.tags",
+              "value": "={{ $json.body.tags }}",
+              "type": "array"
+            },
+            {
+              "id": "e0ef5f51-22d5-44c0-8b11-773eecc75f81",
+              "name": "body.platform_targets",
+              "value": "={{ $json.body.platform_targets }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "232861f3-da55-4412-b4da-282e05a41eb3",
+      "name": "整理字段1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2d6572e6-b9cd-8088-8423-cdac1f6b10b3",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Title|title",
+              "title": "={{ $json.title }}"
+            },
+            {
+              "key": "Series|select",
+              "selectValue": "={{ $json.series }}"
+            },
+            {
+              "key": "Source|select",
+              "selectValue": "={{ $json.source }}"
+            },
+            {
+              "key": "Final Content|rich_text",
+              "textContent": "={{ $json.content }}"
+            },
+            {
+              "key": "Slug|rich_text",
+              "textContent": "={{ $json.body.slug }}"
+            },
+            {
+              "key": "Publish_Ready_Markdown|rich_text",
+              "textContent": "={{ $json.body.publish_ready_markdown }}"
+            },
+            {
+              "key": "Tags|multi_select",
+              "multiSelectValue": "={{ $json.body.tags }}"
+            },
+            {
+              "key": "Platform_Targets|multi_select",
+              "multiSelectValue": "={{ $json.body.platform_targets }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6fe4a54a-7e5f-4b59-9c0a-92fbd99465c8",
+      "name": "写入 Notion 数据库",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -400
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "VJO0M4OuCXEQURXm",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook (AI Summary Input)": [
+      {
+        "json": {
+          "headers": {
+            "host": "kele5215.app.n8n.cloud",
+            "user-agent": "curl/8.7.1",
+            "content-length": "701",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "240f:65:9f25:1:6106:8c76:b63f:cfcf",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "JP",
+            "cf-ray": "9b5dd6114682deb3-NRT",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "240f:65:9f25:1:6106:8c76:b63f:cfcf, 172.71.24.41",
+            "x-forwarded-host": "kele5215.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-80-5fc4f59987-f5hxw",
+            "x-is-trusted": "yes",
+            "x-real-ip": "240f:65:9f25:1:6106:8c76:b63f:cfcf"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "title": "学习日志 · Arcade 子弹系统优化",
+            "series": "Python + 游戏开发",
+            "source": "AI 自动总结",
+            "slug": "arcade-bullet-system-optimization-day03",
+            "content": "今天优化了射击系统：修复子弹角度偏移问题，增加了发射冷却时间，并且测试了多行鱼阵逻辑。",
+            "publish_ready_markdown": "## 🎮 Arcade 射击系统优化\n\n- 修复子弹角度偏移\n- 增加冷却时间防止连射 bug\n- 多行鱼阵逻辑测试完成\n\n> 下一步：加入音效与碰撞反馈",
+            "tags": [
+              "python",
+              "arcade",
+              "game-dev",
+              "daily-learning"
+            ],
+            "platform_targets": [
+              "notion",
+              "github",
+              "blog",
+              "medium"
+            ]
+          },
+          "webhookUrl": "https://kele5215.app.n8n.cloud/webhook/ai-summary-to-notion",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook (AI Summary Input)": {
+      "main": [
+        [
+          {
+            "node": "整理字段1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理字段1": {
+      "main": [
+        [
+          {
+            "node": "写入 Notion 数据库",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0150a87b-8c87-4910-9c2e-523cf0097df8",
+  "meta": {
+    "instanceId": "adff9b0b0a9ba782065bc5400a759d6132362c9ee983026c6d773201af7e78b3"
+  },
+  "id": "ntw7W20qNMsRgpGD",
+  "tags": []
+}
