@@ -1,0 +1,321 @@
+{
+  "name": "AI Summary → Notion (Final v3)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-summary-to-notion",
+        "options": {}
+      },
+      "name": "Webhook (AI Summary Input)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        144
+      ],
+      "id": "24d0ed3e-d45a-47b3-a8f8-0932ef96d3c1",
+      "webhookId": "0ab1ad38-5bd4-4707-a8e0-5d0ac0c0ec6c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "title",
+              "value": "={{ $json.body?.title || $json.title || \"Untitled Note\" }}",
+              "type": "string",
+              "id": "f2dccd6b-39d4-4f97-a698-68b43782f089"
+            },
+            {
+              "name": "series",
+              "value": "={{ $json.body?.series || $json.series || \"未分类\" }}",
+              "type": "string",
+              "id": "942d3c87-bba7-45b2-a9bb-3380ddebd454"
+            },
+            {
+              "name": "source",
+              "value": "={{ $json.body?.source || $json.source || \"AI\" }}",
+              "type": "string",
+              "id": "cfed1109-ec43-456b-9e5a-fb87c4a3e271"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.body?.content || $json.content || \"\" }}",
+              "type": "string",
+              "id": "63c555a5-3f3d-4ec3-8c15-b3925bcf91e0"
+            },
+            {
+              "name": "slug",
+              "value": "={{ $json.body?.slug || $json.slug || ($json.title || \"untitled\") .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') }}",
+              "type": "string",
+              "id": "903f3890-8f3e-482d-b365-f0062656c4d1"
+            },
+            {
+              "name": "tags",
+              "value": "={{ $json.body?.tags || $json.tags || [] }}",
+              "type": "array",
+              "id": "c336d81f-2588-4154-8c33-35e5df83b76d"
+            },
+            {
+              "name": "platform_targets",
+              "value": "={{ $json.body?.platform_targets || $json.platform_targets || [\"notion\"] }}",
+              "type": "array",
+              "id": "a0ad56a4-2558-4c61-964a-9b48e83739c7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set_Normalize",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        144
+      ],
+      "id": "a2fffaf6-9ec2-4b45-bade-d908e595b3fb"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "你是一名内容编辑助手，请对输入内容进行：\\\\n1）提炼结构化摘要\\\\n2）逻辑优化与重写\\\\n3）输出适合发布的 Markdown\\\\n\\\\n要求：\\\\n- 清晰有层级\\\\n- 适合笔记 / 分享平台\\\\n- 不要加入虚构信息"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=原文：\\\\n{{$json.content}}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "name": "AI Rewrite (LLM)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2a58b397-3526-4ae0-8234-f86a8f83891a"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        336
+      ],
+      "id": "6ff1c0dc-2c88-412d-afb6-c0026b21db1e",
+      "credentials": {
+        "openAiApi": {
+          "id": "nFBLwSqh9AlpaAIX",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "title",
+              "value": "={{ $('Set_Normalize').item.json.title }}",
+              "type": "string",
+              "id": "9e97dffd-1ee3-4bc5-9237-e3ff945b928a"
+            },
+            {
+              "name": "series",
+              "value": "={{ $('Set_Normalize').item.json.series }}",
+              "type": "string",
+              "id": "e8abf6c2-5f54-4457-b994-dc87c6ddb391"
+            },
+            {
+              "name": "source",
+              "value": "={{ $('Set_Normalize').item.json.source }}",
+              "type": "string",
+              "id": "d459b79d-6d38-42bd-8833-b21f3a47a589"
+            },
+            {
+              "name": "slug",
+              "value": "={{ $('Set_Normalize').item.json.slug }}",
+              "type": "string",
+              "id": "8afa163c-c2c4-45e9-a2c0-2440e5ccd083"
+            },
+            {
+              "name": "publish_ready_markdown",
+              "value": "={{ $json.text }}",
+              "type": "string",
+              "id": "25dca3ce-95af-4bfb-9bc6-89cd1e380b4b"
+            },
+            {
+              "name": "tags",
+              "value": "={{ $('Set_Normalize').item.json.tags }}",
+              "type": "array",
+              "id": "acf65b4d-a360-4411-a90e-12140cf4c116"
+            },
+            {
+              "name": "platform_targets",
+              "value": "={{ $('Set_Normalize').item.json.platform_targets }}",
+              "type": "array",
+              "id": "9b559990-9e6f-4827-986f-9bd331b1037f"
+            },
+            {
+              "name": "final_content",
+              "value": "={{ $json.text }}",
+              "type": "string",
+              "id": "5347602e-16b4-4375-ac82-f4200fcfeb6d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set_Final_Format",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        256,
+        144
+      ],
+      "id": "f4a263df-3775-4116-99d1-db23cac63f37"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": "2d6572e6-b9cd-8088-8423-cdac1f6b10b3",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Title|title",
+              "title": "={{ $json.title }}"
+            },
+            {
+              "key": "Series|select",
+              "selectValue": "={{ $json.series }}"
+            },
+            {
+              "key": "Source|select",
+              "selectValue": "={{ $json.source }}"
+            },
+            {
+              "key": "Slug|rich_text",
+              "textContent": "={{ $json.slug }}"
+            },
+            {
+              "key": "Final Content|rich_text",
+              "textContent": "={{ $json.final_content }}"
+            },
+            {
+              "key": "Publish_Ready_Markdown|rich_text",
+              "textContent": "={{ $json.publish_ready_markdown }}"
+            },
+            {
+              "key": "Tags|multi_select",
+              "multiSelectValue": "={{ $json.tags }}"
+            },
+            {
+              "key": "Platform_Targets|multi_select",
+              "multiSelectValue": "={{ $json.platform_targets }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "写入 Notion 数据库",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        144
+      ],
+      "id": "752c8159-d892-42f1-b5b7-b8d02f762373",
+      "credentials": {
+        "notionApi": {
+          "id": "9MwA1kCsy8mXJDmh",
+          "name": "Notion account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook (AI Summary Input)": {
+      "main": [
+        [
+          {
+            "node": "Set_Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Normalize": {
+      "main": [
+        [
+          {
+            "node": "AI Rewrite (LLM)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Rewrite (LLM)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Rewrite (LLM)": {
+      "main": [
+        [
+          {
+            "node": "Set_Final_Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Final_Format": {
+      "main": [
+        [
+          {
+            "node": "写入 Notion 数据库",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a39270eb-61f9-4ba4-bfd6-8bd81390ddef",
+  "meta": {
+    "instanceId": "adff9b0b0a9ba782065bc5400a759d6132362c9ee983026c6d773201af7e78b3"
+  },
+  "id": "Iz1QC4mRaZlzf5bG",
+  "tags": []
+}
